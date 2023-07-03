@@ -1,3 +1,13 @@
+///////////////////////////////////////////////////////////////////////////////
+/// \file spdlog.h
+/// A binding to add parameterized_string support for spdlog
+/// The binding performs a naive conversion of any non-printable character to a 
+/// question mark (?) to prevent log file polution and forging.
+/// This helps prevent [CWE-117] Improper Output Neutralization for Logs 
+//
+//  Copyright 2023 Yariv Tal. Distributed under the Boost
+//  Software License, Version 1.0. (See accompanying file
+//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 #pragma once
 
 #include "spdlog/spdlog.h"

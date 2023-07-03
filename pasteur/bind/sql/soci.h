@@ -1,3 +1,15 @@
+///////////////////////////////////////////////////////////////////////////////
+/// \file soci.h
+/// Defines a binding for soci (a sql library) so using parameterized_string with
+/// soci automatically converts the string literals into a parameterized sql
+/// statement and passes the embedded arguments as parameterized sql query
+/// arguments.
+/// This helps prevent [CWE-89](https://cwe.mitre.org/data/definitions/89.html) -
+///   improperly neutralizing special elements in SQL commands (SQL injection). (ranked #3 in 2022)
+//
+//  Copyright 2023 Yariv Tal. Distributed under the Boost
+//  Software License, Version 1.0. (See accompanying file
+//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 #pragma once
 
 #include "parameterized.hpp"

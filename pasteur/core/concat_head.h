@@ -1,3 +1,13 @@
+///////////////////////////////////////////////////////////////////////////////
+/// \file concat_head.h
+/// Defines the "concat" global variable which is the only instantiation of concat_head_t
+/// This is used to initialize a sequence of parameterized_string concatenations via use
+/// of conversion ctors instead of explicitly using pstr::embed() explicitly
+/// Example: pstr::concat / "Welcome to level " + level + ", " + name;
+//
+//  Copyright 2023 Yariv Tal. Distributed under the Boost
+//  Software License, Version 1.0. (See accompanying file
+//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 #pragma once
 
 #ifndef __CONCAT_HEAD_H

@@ -1,3 +1,10 @@
+///////////////////////////////////////////////////////////////////////////////
+/// \file paramstr.h
+/// Defines parameterized_string
+//
+//  Copyright 2023 Yariv Tal. Distributed under the Boost
+//  Software License, Version 1.0. (See accompanying file
+//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 #pragma once
 
 #ifndef __PSTR_PARAMSTR_H
@@ -15,14 +22,14 @@ struct parameterized_string;
 template<size_t FORMAT_STRINGS, typename HeadT, typename... Args>
 class parameterized_string<FORMAT_STRINGS, HeadT, Args...> : public parameterized_string_texts<FORMAT_STRINGS>, public parameterized_string_args<HeadT, Args...> {
 public:
-	explicit parameterized_string(parameterized_string<FORMAT_STRINGS - 1, HeadT, Args...>&& a_param, const char* a_fmt, size_t a_len)
+	explicit parameterized_string(parameterized_string<FORMAT_STRINGS - 1, HeadT, Args...>&& a_param, const char* a_fmt, size_t a_len) noexcept
 		: parameterized_string_texts<FORMAT_STRINGS>(std::move(a_param), a_fmt, a_len)
 		, parameterized_string_args<HeadT, Args...>(std::move(a_param)) {
 	}
 
-	explicit parameterized_string(parameterized_string<FORMAT_STRINGS, Args...>&& a_param, HeadT&& a_additionalParam)
+	explicit parameterized_string(parameterized_string<FORMAT_STRINGS, Args...>&& a_param, HeadT&& a_additionalParam) noexcept
 		: parameterized_string_texts<FORMAT_STRINGS>(std::move(a_param))
-		, parameterized_string_args<HeadT, Args...>(std::move(a_param), std::forward(a_additionalParam)) {
+		, parameterized_string_args<HeadT, Args...>(std::move(a_param), std::move(a_additionalParam)) { //forward
 	}
 
 	explicit parameterized_string(parameterized_string<FORMAT_STRINGS, Args...>&& a_param, const HeadT& a_additionalParam)
@@ -38,8 +45,8 @@ public:
 template<typename T>
 class parameterized_string<1, T> : public parameterized_string_texts<1>, public parameterized_string_args<T> {
 public:
-	explicit parameterized_string(const char* a_fmt, size_t a_len, T&& a_param) : parameterized_string_texts<1>(a_fmt, a_len), parameterized_string_args<T>(std::move(a_param)) { }
-	explicit parameterized_string(const char* a_fmt, size_t a_len, const T& a_param) : parameterized_string_texts<1>(a_fmt, a_len), parameterized_string_args<T>(a_param) { }
+	explicit parameterized_string(const char* a_fmt, size_t a_len, T&& a_param) noexcept : parameterized_string_texts<1>(a_fmt, a_len), parameterized_string_args<T>(std::move(a_param)) { }
+	explicit parameterized_string(const char* a_fmt, size_t a_len, const T& a_param) noexcept : parameterized_string_texts<1>(a_fmt, a_len), parameterized_string_args<T>(a_param) { }
 };
 
 namespace detail {
@@ -50,25 +57,25 @@ template<>
 class parameterized_string<1, detail::argskip> : public parameterized_string_texts<1>, public parameterized_string_args<detail::argskip> {
 public:
 	template<size_t CSTR_SIZE_INCL_NULL>
-	parameterized_string(const char(&a_format)[CSTR_SIZE_INCL_NULL]) : this(a_format, CSTR_SIZE_INCL_NULL - 1) { } // not explicit on purpose
+	parameterized_string(const char(&a_format)[CSTR_SIZE_INCL_NULL]) : parameterized_string(a_format, CSTR_SIZE_INCL_NULL - 1) { } // not explicit on purpose
 
 	explicit parameterized_string(const char* a_fmt, size_t a_len) : parameterized_string_texts<1>(a_fmt, a_len), parameterized_string_args<detail::argskip>(detail::argskip{}) { }
 };
 
 template<size_t Idx, size_t FORMAT_STRINGS2>
-const char* const get_text(const parameterized_string_texts<FORMAT_STRINGS2>& a_parameterized) {
+const char* const get_text(const parameterized_string_texts<FORMAT_STRINGS2>& a_parameterized) noexcept {
 	static_assert(Idx >= 0 && Idx < FORMAT_STRINGS2);
 	return a_parameterized.m_fmt[Idx];
 }
 
 template<size_t Idx, size_t FORMAT_STRINGS2>
-size_t const get_text_len(const parameterized_string_texts<FORMAT_STRINGS2>& a_parameterized) {
+size_t const get_text_len(const parameterized_string_texts<FORMAT_STRINGS2>& a_parameterized) noexcept {
 	static_assert(Idx >= 0 && Idx < FORMAT_STRINGS2);
 	return a_parameterized.m_len[Idx];
 }
 
 template<size_t Idx, typename HeadT2, typename... Args2>
-const typename std::tuple_element_t<sizeof...(Args2) - Idx /*+1 for HeadT2, -1*/, std::tuple<HeadT2, Args2...>>& get_arg(const parameterized_string_args<HeadT2, Args2...>& a_parameterized) {
+const typename std::tuple_element_t<sizeof...(Args2) - Idx /*+1 for HeadT2, -1*/, std::tuple<HeadT2, Args2...>>& get_arg(const parameterized_string_args<HeadT2, Args2...>& a_parameterized) noexcept {
 	static_assert(Idx >= 0 && Idx < sizeof...(Args2) + 1 /*HeadT2*/);
 	return std::get<sizeof...(Args2) + 1 - Idx - 1>(a_parameterized.m_args);
 }

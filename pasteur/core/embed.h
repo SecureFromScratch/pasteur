@@ -1,3 +1,11 @@
+///////////////////////////////////////////////////////////////////////////////
+/// \file embed.h
+/// Defines the embed function, used to explicitly embed arguments within parameterized_string
+/// Implicit embedding is achieved via the conversion ctor of embedded_parameter
+//
+//  Copyright 2023 Yariv Tal. Distributed under the Boost
+//  Software License, Version 1.0. (See accompanying file
+//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 #pragma once
 
 #ifndef __PSTR_EMBED_H
